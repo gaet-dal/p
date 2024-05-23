@@ -39,9 +39,27 @@ public class ProductControl extends HttpServlet {
 
 		if (request.getParameter("action") != null && request.getParameter("action").compareTo("dettaglio") == 0) {
 			String codiceStr = request.getParameter("codice");
-			int codice = Integer.parseInt(codiceStr);
-			
 			ProductModel model = new ProductModel();
+			
+			//
+			try {
+				int codice = Integer.parseInt(codiceStr);
+				
+				try {
+					ProductBean prodotto = model.doRetrieveByKey(codice);
+					request.setAttribute("prodottoDettaglio", prodotto);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				finally {
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/productDetail.jsp");
+					dispatcher.forward(request, response);
+				}
+			} catch(NumberFormatException e) {
+				e.printStackTrace();
+			}
+			
+			/*
 			try {
 				ProductBean prodotto = model.doRetrieveByKey(codice);
 				request.setAttribute("prodottoDettaglio", prodotto);
@@ -52,6 +70,7 @@ public class ProductControl extends HttpServlet {
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/productDetail.jsp");
 				dispatcher.forward(request, response);
 			}
+			*/
 		}
 		else if (request.getParameter("action") != null && request.getParameter("action").compareTo("elimina") == 0) {
 			@SuppressWarnings("unchecked")
